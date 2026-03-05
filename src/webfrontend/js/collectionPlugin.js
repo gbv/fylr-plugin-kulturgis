@@ -61,14 +61,11 @@ CollectionPluginKulturGIS = (function(superClass) {
 
         const modal = this.__openCreatingLinkModal();
         this.__performPostRequest(url, requestData).then(result => {
-            const messageText = result.error
-                ? $$('custom.data.type.kulturgis.error')
-                : result.linkedFindplaces.length === 1
-                    ? $$('custom.data.type.kulturgis.success.single')
-                    : (result.linkedFindplaces.length + ' ' + $$('custom.data.type.kulturgis.success.multiple'));
+            const messageText = this.__getResultMessageText(result); 
             this.__closeModal(modal);
             this.__openMessageModal(messageText);
-        }).catch(() => {
+        }).catch((err) => {
+            console.error(err);
             this.__closeModal(modal);
             this.__openMessageModal($$('custom.data.type.kulturgis.error'));
         });
@@ -86,6 +83,19 @@ CollectionPluginKulturGIS = (function(superClass) {
             return response.json();
         });
     };
+
+    Plugin.__getResultMessageText = function(result) {
+        if (result.error) return $$('custom.data.type.kulturgis.error');
+
+        switch (result.linkedFindplaces.length) {
+            case 0:
+                return $$('custom.data.type.kulturgis.success.none');
+            case 1:
+                return $$('custom.data.type.kulturgis.success.single');
+            default:
+                return (result.linkedFindplaces.length + ' ' + $$('custom.data.type.kulturgis.success.multiple'));
+        }
+    }
 
     Plugin.__openCreatingLinkModal = function() {
         const modal = new CUI.Modal({
