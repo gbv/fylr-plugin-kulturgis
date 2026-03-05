@@ -52,7 +52,8 @@ async function getFindplaces(ensemble, geoPluginConfiguration) {
     const findplaceGeometryIds = await getFindplaceGeometryIds(ensemblePolygons, geoPluginConfiguration);
     const findplaceElements = await getFindplaceElements(findplaceGeometryIds);
     const findplaces = await getLinkedFindplaces(findplaceElements);
-    return getFindplacesToAdd(findplaces, ensemble);
+    const findplacesToAdd = getFindplacesToAdd(findplaces, ensemble);
+    return sortFindplaces(findplacesToAdd);
 }
 
 async function getEnsembleElements(ensemble) {
@@ -229,6 +230,12 @@ function getFindplacesToAdd(findplaces, ensemble) {
     return findplaces.filter(findplace => !linkedFindplaceIds.includes(findplace.fundplatz._id));
 }
 
+function sortFindplaces(findplaces) {
+    return findplaces.sort((findplace1, findplace2) => {
+        return getDisplayName(findplace1).localeCompare(getDisplayName(findplace2), 'de', { numeric: true });
+    });
+}
+
 async function linkFindplacesWithEnsemble(ensemble, findplaces) {
     const editedEnsemble = {
         ensemble: ensemble.ensemble,
@@ -306,4 +313,8 @@ async function saveObject(object) {
 
     const response = await fetch(url, { method: 'POST', body: JSON.stringify([object]) });
     return response.json();
+}
+
+function getDisplayName(object) {
+    return object._standard[1].text['de-DE'];
 }
