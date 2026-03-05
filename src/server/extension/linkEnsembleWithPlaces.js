@@ -51,7 +51,8 @@ async function getFindplaces(ensemble, geoPluginConfiguration) {
     const ensemblePolygons = await getEnsemblePolygons(ensembleGeometryIds, geoPluginConfiguration);
     const findplaceGeometryIds = await getFindplaceGeometryIds(ensemblePolygons, geoPluginConfiguration);
     const findplaceElements = await getFindplaceElements(findplaceGeometryIds);
-    return getLinkedFindplaces(findplaceElements);
+    const findplaces = await getLinkedFindplaces(findplaceElements);
+    return getFindplacesToAdd(findplaces, ensemble);
 }
 
 async function getEnsembleElements(ensemble) {
@@ -218,6 +219,14 @@ async function getLinkedFindplaces(findplaceElements) {
     }
 
     return result;
+}
+
+function getFindplacesToAdd(findplaces, ensemble) {
+    const linkedFindplaceIds = ensemble.ensemble['_reverse_nested:ensemble__fundplatz:lk_ensemble'].map(link => {
+        return link.lk_fundplatz.fundplatz._id;
+    });
+
+    return findplaces.filter(findplace => !linkedFindplaceIds.includes(findplace.fundplatz._id));
 }
 
 async function linkFindplacesWithEnsemble(ensemble, findplaces) {
