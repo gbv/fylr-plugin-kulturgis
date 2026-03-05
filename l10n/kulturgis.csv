@@ -1,6 +1,7 @@
 key,de-DE,en-US
 custom.data.type.kulturgis.createLinksButton,Fundplätze verknüpfen,Link find places
 custom.data.type.kulturgis.creatingLink,Fundplätze werden verknüpft...,Linking find places...
+custom.data.type.kulturgis.success.none,Es wurden keine neu zu verknüpfenden Fundplätze gefunden.,No new find places to link were found.
 custom.data.type.kulturgis.success.single,Ein Fundplatz wurde erfolgreich verknüpft.,Successfully linked one find place.
 custom.data.type.kulturgis.success.multiple,Fundplätze wurden erfolgreich verknüpft.,find places successfully linked.
 custom.data.type.kulturgis.error,"Beim Versuch, Fundplätze zu verknüpfen, ist ein Fehler aufgetreten.","An error occurred while attempting to link find places."
