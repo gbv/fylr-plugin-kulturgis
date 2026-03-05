@@ -1,0 +1,33 @@
+plugin:
+  name: kulturgis
+  version: 1.0
+  url: https://github.com/gbv/fylr-plugin-kulturgis
+  displayname:
+    de-DE: KulturGIS
+    en-US: KulturGIS
+  server:
+    api-version:
+      require: 1
+  webfrontend:
+    url: kulturgis.js
+    dependencies:
+      custom-data-type-nfis-geometry
+  l10n: l10n/kulturgis.csv
+
+base_url_prefix: webfrontend
+
+extensions:
+  linkEnsembleWithPlaces:
+    exec:
+      service: "node"
+      commands:
+        - prog: "node"
+          stdin:
+            type: "body"
+          stdout:
+            type: "body"
+          args:
+            - type: "value"
+              value: "%_exec.pluginDir%/server/extension/linkEnsembleWithPlaces.js"
+            - type: "value"
+              value: "%info.json%"
