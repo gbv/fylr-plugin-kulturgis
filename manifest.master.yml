@@ -10,11 +10,22 @@ plugin:
       require: 1
   webfrontend:
     url: kulturgis.js
+    css: kulturgis.css
     dependencies:
       custom-data-type-nfis-geometry
   l10n: l10n/kulturgis.csv
 
 base_url_prefix: webfrontend
+
+base_config:
+  - name: kulturgis
+    parameters:
+      hamburg_tag_id:
+        type: int
+        position: 0
+      niedersachsen_tag_id:
+        type: int
+        position: 1
 
 extensions:
   linkEnsembleWithPlaces:
@@ -29,5 +40,19 @@ extensions:
           args:
             - type: "value"
               value: "%_exec.pluginDir%/server/extension/linkEnsembleWithPlaces.js"
+            - type: "value"
+              value: "%info.json%"
+  getAlkisData:
+    exec:
+      service: "node"
+      commands:
+        - prog: "node"
+          stdin:
+            type: "body"
+          stdout:
+            type: "body"
+          args:
+            - type: "value"
+              value: "%_exec.pluginDir%/server/extension/getAlkisData.js"
             - type: "value"
               value: "%info.json%"

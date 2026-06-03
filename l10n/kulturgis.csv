@@ -6,3 +6,11 @@ custom.data.type.kulturgis.success.single,Ein Fundplatz wurde erfolgreich verkn�
 custom.data.type.kulturgis.success.multiple,Fundpl채tze wurden erfolgreich verkn체pft.,find places successfully linked.
 custom.data.type.kulturgis.error,"Beim Versuch, Fundpl채tze zu verkn체pfen, ist ein Fehler aufgetreten.","An error occurred while attempting to link find places."
 custom.data.type.kulturgis.ok,OK,OK
+custom.mask.splitter.alkis.name,ALKIS-Daten,ALKIS data
+custom.mask.splitter.alkis.title|text,ALKIS-Daten,ALKIS data
+custom.mask.splitter.alkis.header.districts,Gemarkungen,Districts
+custom.mask.splitter.alkis.header.plots,Flurst체cke,Plots
+custom.mask.splitter.alkis.loading,Lade Daten...,Loading data...
+custom.mask.splitter.alkis.noResults,Keine,None
+server.config.parameter.system.kulturgis.hamburg_tag_id.label,Tag-ID Hamburg, Tag ID Hamburg
+server.config.parameter.system.kulturgis.niedersachsen_tag_id.label,Tag-ID Niedersachsen, Tag ID Niedersachsen

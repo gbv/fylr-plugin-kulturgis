@@ -8,8 +8,14 @@ build: clean buildinfojson
 	mkdir -p build/$(PLUGIN_NAME)/webfrontend
 	mkdir -p build/$(PLUGIN_NAME)/server/extension
 
-	cp src/webfrontend/js/collectionPlugin.js build/$(PLUGIN_NAME)/webfrontend/$(PLUGIN_NAME).js
+	cp src/webfrontend/css/alkisCustomMaskSplitterPlugin.css build/$(PLUGIN_NAME)/webfrontend/$(PLUGIN_NAME).css
+	cp src/webfrontend/js/core.js build/$(PLUGIN_NAME)/webfrontend/$(PLUGIN_NAME).js
+	cat src/webfrontend/js/collectionPlugin.js >> build/$(PLUGIN_NAME)/webfrontend/$(PLUGIN_NAME).js
+	cat src/webfrontend/js/alkisCustomMaskSplitterPlugin.js >> build/$(PLUGIN_NAME)/webfrontend/$(PLUGIN_NAME).js
 	cp src/server/extension/linkEnsembleWithPlaces.js build/$(PLUGIN_NAME)/server/extension/linkEnsembleWithPlaces.js
+	cat src/server/core.js >> build/$(PLUGIN_NAME)/server/extension/linkEnsembleWithPlaces.js
+	cp src/server/extension/getAlkisData.js build/$(PLUGIN_NAME)/server/extension/getAlkisData.js
+	cat src/server/core.js >> build/$(PLUGIN_NAME)/server/extension/getAlkisData.js
 	cp l10n/$(PLUGIN_NAME).csv build/$(PLUGIN_NAME)/l10n/$(PLUGIN_NAME).csv
 	cp manifest.master.yml build/$(PLUGIN_NAME)/manifest.yml
 	cp build-info.json build/$(PLUGIN_NAME)/build-info.json
