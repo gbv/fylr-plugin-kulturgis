@@ -164,7 +164,10 @@ async function getLinkedFindplaces(findplaceElements) {
     const ids = [];
 
     for (let findplaceElement of findplaceElements) {
-        for (let entry of findplaceElement.fundplatz_element['_reverse_nested:fundplatz__fundplatz_element:lk_fundplatz_element']) {
+        const nestedEntries = findplaceElement.fundplatz_element['_reverse_nested:fundplatz__fundplatz_element:lk_fundplatz_element'];
+        if (!nestedEntries) continue;
+
+        for (let entry of nestedEntries) {
             const id = entry.lk_fundplatz.fundplatz._id;
             if (ids.includes(id)) continue;
             const mask = entry.lk_fundplatz._mask;
