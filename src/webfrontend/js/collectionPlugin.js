@@ -34,7 +34,7 @@ const CollectionPluginKulturGIS = (function(superClass) {
             group: collection.getToolGroup(),
             name: 'kulturgis-create-links-button',
             sort: 'I:1',
-            text: $$('custom.data.type.kulturgis.createLinksButton'),
+            text: $$('collectionPlugin.kulturgis.createLinksButton'),
             icon: new CUI.Icon({ class: 'fa-link' }),
             favorite: true,
             run: (function(_this) {
@@ -63,28 +63,28 @@ const CollectionPluginKulturGIS = (function(superClass) {
         }).catch((err) => {
             console.error(err);
             this.__closeModal(modal);
-            this.__openMessageModal($$('custom.data.type.kulturgis.error'));
+            this.__openMessageModal($$('collectionPlugin.kulturgis.error'));
         });
     };
 
     Plugin.__getResultMessageText = function(result) {
-        if (result.error) return $$('custom.data.type.kulturgis.error');
+        if (result.error) return $$('collectionPlugin.kulturgis.error');
 
         switch (result.linkedFindplaces.length) {
             case 0:
-                return $$('custom.data.type.kulturgis.success.none');
+                return $$('collectionPlugin.kulturgis.success.none');
             case 1:
-                return $$('custom.data.type.kulturgis.success.single');
+                return $$('collectionPlugin.kulturgis.success.single');
             default:
-                return (result.linkedFindplaces.length + ' ' + $$('custom.data.type.kulturgis.success.multiple'));
+                return (result.linkedFindplaces.length + ' ' + $$('collectionPlugin.kulturgis.success.multiple'));
         }
     }
 
     Plugin.__openCreatingLinkModal = function() {
         const modal = new CUI.Modal({
             pane: {
-                header_left: new CUI.Label({ text: $$('custom.data.type.kulturgis.createLinksButton') }),
-                content: new CUI.Label({ icon: 'spinner', text: $$('custom.data.type.kulturgis.creatingLink') })
+                header_left: new CUI.Label({ text: $$('collectionPlugin.kulturgis.createLinksButton') }),
+                content: new CUI.Label({ icon: 'spinner', text: $$('collectionPlugin.kulturgis.creatingLink') })
             }
         });
 
@@ -96,14 +96,14 @@ const CollectionPluginKulturGIS = (function(superClass) {
     Plugin.__openMessageModal = function(messageText) {
         const modal = new CUI.Modal({
             pane: {
-                header_left: new CUI.Label({ text: $$('custom.data.type.kulturgis.createLinksButton') }),
+                header_left: new CUI.Label({ text: $$('collectionPlugin.kulturgis.createLinksButton') }),
                 content: new CUI.Label({
                     text: messageText,
                     multiline: true
                 }),
                 footer_right: [
                     new CUI.Button({
-                        text: $$('custom.data.type.kulturgis.ok'),
+                        text: $$('collectionPlugin.kulturgis.ok'),
                         class: 'cui-dialog',
                         primary: true,
                         onClick: () => this.__closeModal(modal)
