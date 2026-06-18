@@ -12,5 +12,15 @@ custom.mask.splitter.alkis.header.districts,Gemarkungen,Districts
 custom.mask.splitter.alkis.header.plots,Flurstücke,Plots
 custom.mask.splitter.alkis.loading,Lade Daten...,Loading data...
 custom.mask.splitter.alkis.noResults,Keine,None
-server.config.parameter.system.kulturgis.hamburg_tag_id.label,Tag-ID Hamburg, Tag ID Hamburg
-server.config.parameter.system.kulturgis.niedersachsen_tag_id.label,Tag-ID Niedersachsen, Tag ID Niedersachsen
+server.config.name.system.kulturgis_tags,Tags,Tags
+server.config.parameter.system.kulturgis_tags.hamburg_tag_id.label,Tag-ID Hamburg,Tag ID Hamburg
+server.config.parameter.system.kulturgis_tags.niedersachsen_tag_id.label,Tag-ID Niedersachsen,Tag ID Niedersachsen
+server.config.name.system.kulturgis_archaeodox,archaeoDox-Anbindung,archaeoDox connection
+server.config.parameter.system.kulturgis_archaeodox.url.label,URL,URL
+server.config.parameter.system.kulturgis_archaeodox.client_id.label,Client-ID,Client ID
+server.config.parameter.system.kulturgis_archaeodox.client_secret.label,Client-Secret,Client secret
+server.config.parameter.system.kulturgis_archaeodox.username.label,Username,Username
+server.config.parameter.system.kulturgis_archaeodox.password.label,Passwort,Password
+server.config.parameter.system.kulturgis_archaeodox.tag_pool_mapping.label,Tags/Pools,Tags/Pools
+server.config.parameter.system.kulturgis_archaeodox.tag_pool_mapping.kulturgis_tag_id.label,Tag-ID (KulturGIS),Tag ID (KulturGIS)
+server.config.parameter.system.kulturgis_archaeodox.tag_pool_mapping.archaeodox_pool_id.label,Pool-ID (archaeoDox),Pool ID (archaeoDox)

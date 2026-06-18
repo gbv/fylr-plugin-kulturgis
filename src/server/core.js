@@ -1,8 +1,35 @@
-async function fetchObject(objectType, mask, id) {
-    const url = info.api_url + '/api/v1/db/' + objectType + '/' + mask + '/' + id + '?access_token=' + info.api_user_access_token;
+async function getAccessToken(fylrUrl, clientId, clientSecret, username, password) {
+    const url = fylrUrl + '/api/oauth2/token';
+
+    const response = await fetch(
+        url,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                grant_type: 'password',
+                scope: 'offline',
+                client_id: clientId,
+                client_secret: clientSecret,
+                username,
+                password
+            }).toString()
+        }
+    );
+
+    if (!response.ok) throw 'Failed to fetch access token';
+
+    const result = await response.json();
+    return result.access_token;
+}
+
+async function fetchObject(objectType, mask, id, fylrUrl = info.api_url, accessToken = info.api_user_access_token) {
+    const url = fylrUrl + '/api/v1/db/' + objectType + '/' + mask + '/' + id + '?access_token=' + accessToken;
 
     const response = await fetch(url, { method: 'GET' });
-    if (!response.ok) throw 'Failed to fetch object: ' + id;
+    if (!response.ok) throw JSON.stringify(await response.json());
     const result = await response.json();
 
     return result?.length
@@ -10,13 +37,17 @@ async function fetchObject(objectType, mask, id) {
         : undefined;
 }
 
-async function saveObject(object) {
-    const url = info.api_url + '/api/v1/db/' + object._objecttype + '?access_token=' + info.api_user_access_token;
+async function saveObject(object, fylrUrl = info.api_url, accessToken = info.api_user_access_token) {
+    const url = fylrUrl + '/api/v1/db/' + object._objecttype + '?access_token=' + accessToken;
 
-    object[object._objecttype]._version++;
+    if (!object[object._objecttype]._version) {
+        object[object._objecttype]._version = 1;
+    } else {
+        object[object._objecttype]._version++;
+    }
 
     const response = await fetch(url, { method: 'POST', body: JSON.stringify([object]) });
-    if (!response.ok) throw 'Failed to save object';
+    if (!response.ok) throw JSON.stringify(await response.json());
     return response.json();
 }
 
@@ -42,6 +73,12 @@ function getWfsConfiguration(objectType, geoPluginConfiguration) {
         featureType: fieldConfiguration.display_wfs_feature_type.ValueText,
         geometryIdFieldName: geoPluginConfiguration.wfs_geometry_id_field_name.ValueText
     };
+}
+
+async function getLinkedDistrictName(object) {
+    const districtId = object[object._objecttype].lk_gemarkung.gemarkung._id;
+    const district = await fetchObject('gemarkung', 'gemarkung__all_fields', districtId);
+    return district.gemarkung.name;
 }
 
 function getAuthorizationString(geoPluginConfiguration) {

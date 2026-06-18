@@ -240,7 +240,7 @@ function getNiedersachsenPlots(alkisData) {
 }
 
 function getState(findplaceData) {
-    const configuration = getPluginConfiguration();
+    const configuration = getTagsConfiguration();
     const tagIds = findplaceData._tags.map(tag => tag._id);
 
     if (tagIds.includes(configuration.hamburg_tag_id)) {
@@ -252,6 +252,6 @@ function getState(findplaceData) {
     }
 }
 
-function getPluginConfiguration() {
-    return info.config.plugin.kulturgis.config.kulturgis;
+function getTagsConfiguration() {
+    return info.config.plugin.kulturgis.config.kulturgis_tags;
 }

@@ -18,7 +18,7 @@ plugin:
 base_url_prefix: webfrontend
 
 base_config:
-  - name: kulturgis
+  - name: kulturgis_tags
     parameters:
       hamburg_tag_id:
         type: int
@@ -26,6 +26,33 @@ base_config:
       niedersachsen_tag_id:
         type: int
         position: 1
+  - name: kulturgis_archaeodox
+    parameters:
+      url:
+        type: text
+        position: 0
+      client_id:
+        type: text
+        position: 1
+      client_secret:
+        type: secret
+        position: 2
+      username:
+        type: text
+        position: 3
+      password:
+        type: secret
+        position: 4
+      tag_pool_mapping:
+        type: table
+        fields:
+          - name: kulturgis_tag_id
+            type: int
+            position: 0
+          - name: archaeodox_pool_id
+            type: int
+            position: 1
+        position: 5
 
 extensions:
   linkEnsembleWithPlaces:
@@ -54,5 +81,33 @@ extensions:
           args:
             - type: "value"
               value: "%_exec.pluginDir%/server/extension/getAlkisData.js"
+            - type: "value"
+              value: "%info.json%"
+  updateArchaeodoxFindplaces:
+    exec:
+      service: "node"
+      commands:
+        - prog: "node"
+          stdin:
+            type: "body"
+          stdout:
+            type: "body"
+          args:
+            - type: "value"
+              value: "%_exec.pluginDir%/server/extension/updateArchaeodoxFindplaces.js"
+            - type: "value"
+              value: "%info.json%"
+  updateArchaeodoxEnsembles:
+    exec:
+      service: "node"
+      commands:
+        - prog: "node"
+          stdin:
+            type: "body"
+          stdout:
+            type: "body"
+          args:
+            - type: "value"
+              value: "%_exec.pluginDir%/server/extension/updateArchaeodoxEnsembles.js"
             - type: "value"
               value: "%info.json%"

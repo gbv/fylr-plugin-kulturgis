@@ -16,6 +16,10 @@ build: clean buildinfojson
 	cat src/server/core.js >> build/$(PLUGIN_NAME)/server/extension/linkEnsembleWithPlaces.js
 	cp src/server/extension/getAlkisData.js build/$(PLUGIN_NAME)/server/extension/getAlkisData.js
 	cat src/server/core.js >> build/$(PLUGIN_NAME)/server/extension/getAlkisData.js
+	cp src/server/extension/updateArchaeodoxFindplaces.js build/$(PLUGIN_NAME)/server/extension/updateArchaeodoxFindplaces.js
+	cat src/server/core.js >> build/$(PLUGIN_NAME)/server/extension/updateArchaeodoxFindplaces.js
+	cp src/server/extension/updateArchaeodoxEnsembles.js build/$(PLUGIN_NAME)/server/extension/updateArchaeodoxEnsembles.js
+	cat src/server/core.js >> build/$(PLUGIN_NAME)/server/extension/updateArchaeodoxEnsembles.js
 	cp l10n/$(PLUGIN_NAME).csv build/$(PLUGIN_NAME)/l10n/$(PLUGIN_NAME).csv
 	cp manifest.master.yml build/$(PLUGIN_NAME)/manifest.yml
 	cp build-info.json build/$(PLUGIN_NAME)/build-info.json
