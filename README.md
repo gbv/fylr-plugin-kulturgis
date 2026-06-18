@@ -4,6 +4,7 @@ This plugin is used by the [KulturGIS fylr](https://kulturgis-amh.gbv.de) and ad
 
 * New context menu option for linking find places to an ensemble based on their respective geometries
 * Custom mask splitter plugin for displaying ALKIS data in detail view
+* Custom API endpoints "createArchaeodoxFindplaces" and "createArchaeodoxEnsembles" that can be configured as workflow webhooks for automatically creating findplaces and ensembles in archaeoDox whenever a new findplace/ensemble has been added in KulturGIS
 
 ## Installation
 
