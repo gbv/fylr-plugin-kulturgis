@@ -3,6 +3,7 @@
 This plugin is used by the [KulturGIS fylr](https://kulturgis-amh.gbv.de) and adds the following functionality:
 
 * New context menu option for linking find places to an ensemble based on their respective geometries
+* Custom mask splitter plugin for displaying ALKIS data in detail view
 
 ## Installation
 
