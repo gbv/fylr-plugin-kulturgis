@@ -8,8 +8,7 @@ collectionPlugin.kulturgis.error,"Beim Versuch, Fundplätze zu verknüpfen, ist 
 collectionPlugin.kulturgis.ok,OK,OK
 custom.mask.splitter.alkis.name,ALKIS-Daten,ALKIS data
 custom.mask.splitter.alkis.title|text,ALKIS-Daten,ALKIS data
-custom.mask.splitter.alkis.header.districts,Gemarkungen,Districts
-custom.mask.splitter.alkis.header.plots,Flurstücke,Plots
+custom.mask.splitter.alkis.header,ALKIS,ALKIS
 custom.mask.splitter.alkis.loading,Lade Daten...,Loading data...
 custom.mask.splitter.alkis.noResults,Keine,None
 server.config.name.system.kulturgis_tags,Tags,Tags

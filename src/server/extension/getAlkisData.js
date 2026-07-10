@@ -83,11 +83,19 @@ async function getAlkisData(findplaceData, polygon) {
 
 async function getHamburgAlkisData(polygon) {
     const data = await getHamburgAlkisResultForPolygon(polygon);
+    const matches = data.matchAll(/<ave:Flurstueck([\s\S]+?)<\/ave:Flurstueck>/g);
 
-    return {
-        districts: getHamburgDistricts(data),
-        plots: getHamburgPlots(data)
-    };
+    const result = [];
+
+    for (let match of matches) {
+        const entry = {
+            district: getHamburgDistrict(match[1]),
+            plot: getHamburgPlot(match[1])
+        };
+        if (entry) result.push(entry);
+    }
+
+    return result;
 }
 
 async function getHamburgAlkisResultForPolygon(polygon) {
@@ -123,36 +131,29 @@ async function getHamburgAlkisResultForPolygon(polygon) {
     return response.text();
 }
 
-function getHamburgDistricts(alkisData) {
-    const result = alkisData.matchAll(/<ave:gemarkung>\s*(.+)\s*<\/ave:gemarkung>/g).reduce((result, match) => {
-        if (!result.includes(match[1])) result.push(match[1]);
-        return result;
-    }, []);
-
-    result.sort();
-
-    return result;
+function getHamburgDistrict(data) {
+    return data.match(/<ave:gemarkung>\s*(.+)\s*<\/ave:gemarkung>/)?.[1];
 }
 
-function getHamburgPlots(alkisData) {
-    const numbers = alkisData.matchAll(/<ave:flstnrzae>\s*(\d+)\s*<\/ave:flstnrzae>/g).reduce((result, match) => {
-        const number = parseInt(match[1]);
-        if (!result.includes(number)) result.push(number);
-        return result;
-    }, []);
-
-    numbers.sort((a, b) => a - b);
-
-    return numbers;
+function getHamburgPlot(data) {
+    return data.match(/<ave:flstnrzae>\s*(\d+)\s*<\/ave:flstnrzae>/)?.[1];
 }
 
 async function getNiedersachsenAlkisData(polygon) {
     const data = await getNiedersachsenAlkisResultForPolygon(polygon);
+    const matches = data.matchAll(/<AX_Flurstueck([\s\S]+?)<\/AX_Flurstueck>/g);
 
-    return {
-        districts: await getNiedersachsenDistricts(data),
-        plots: getNiedersachsenPlots(data)
-    };
+    const result = [];
+
+    for (match of matches) {
+        const entry = {
+            district: await getNiedersachsenDistrict(match[1]),
+            plot: getNiedersachsenPlot(match[1])
+        };
+        if (entry) result.push(entry);
+    }
+    
+    return result;
 }
 
 async function getNiedersachsenAlkisResultForPolygon(polygon) {
@@ -189,20 +190,8 @@ async function getNiedersachsenAlkisResultForPolygon(polygon) {
     return response.text();
 }
 
-async function getNiedersachsenDistricts(alkisData) {
-    const result = [];
-
-    const matches = alkisData.matchAll(/<gemarkungsnummer>\s*(\d+)\s*<\/gemarkungsnummer>/g);
-    
-    for (let match of matches) {
-        const label = await getDistrictLabel(match[1]);
-        if (label && !result.includes(label)) result.push(label);
-    }
-
-    return result;
-}
-
-async function getDistrictLabel(districtNumber) {
+async function getNiedersachsenDistrict(data) {
+    const districtNumber = data.match(/<gemarkungsnummer>\s*(\d+)\s*<\/gemarkungsnummer>/)?.[1];
     const danteConcept = await getDanteConcept(districtNumber);
     return danteConcept?.prefLabel?.de ?? danteConcept?.prefLabel?.zxx;
 }
@@ -218,25 +207,16 @@ async function getDanteConcept(districtNumber) {
     return concepts.find(concept => concept.uri.includes('nld_gemarkung_niedersachsen'));
 }
 
-function getNiedersachsenPlots(alkisData) {
+function getNiedersachsenPlot(data) {
     const result = [];
 
-    const matches = alkisData.matchAll(/<AX_Flurstuecksnummer>([\s\S]+)<\/AX_Flurstuecksnummer>/g);
+    const plot = data.match(/<AX_Flurstuecksnummer>([\s\S]+)<\/AX_Flurstuecksnummer>/)?.[1];
+    const zaehler = plot.match(/<zaehler>\s*(\d+)\s*<\/zaehler>/)?.[1];
+    const nenner = plot.match(/<nenner>\s*(\d+)\s*<\/nenner>/)?.[1];
 
-    for (let match of matches) {
-        const content = match[1];
-        const zaehler = content.match(/<zaehler>\s*(\d+)\s*<\/zaehler>/)?.[1];
-        const nenner = content.match(/<nenner>\s*(\d+)\s*<\/nenner>/)?.[1];
-        if (zaehler && nenner) {
-            result.push(zaehler + '/' + nenner);
-        } else if (zaehler) {
-            result.push(zaehler);
-        } else if (nenner) {
-            result.push(nenner);
-        }
-    }
-
-    return result;
+    return zaehler && nenner
+        ? zaehler + '/' + nenner
+        : zaehler ?? nenner;
 }
 
 function getState(findplaceData) {

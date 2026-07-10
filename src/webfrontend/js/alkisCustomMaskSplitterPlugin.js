@@ -19,37 +19,18 @@ const CustomMaskSplitterAlkis = (function(superClass) {
         if (opts.mode !== 'detail' || opts.top_level_data._objecttype !== 'fundplatz') return;
 
         const rootElement = CUI.dom.div();
-        const districtsElement = CUI.dom.div('alkis-districts');
-        const plotsElement = CUI.dom.div();
+        CUI.dom.append(rootElement, this.__renderHeader());
 
-        CUI.dom.append(rootElement, districtsElement);
-        CUI.dom.append(rootElement, plotsElement);
-
-        CUI.dom.append(districtsElement, this.__renderHeader($$('custom.mask.splitter.alkis.header.districts')));
-        CUI.dom.append(plotsElement, this.__renderHeader($$('custom.mask.splitter.alkis.header.plots')));
-
-        const districtsContentElement = CUI.dom.div('ez5-field-block-content');
-        CUI.dom.append(districtsElement, districtsContentElement);
-
-        const plotsContentElement = CUI.dom.div('ez5-field-block-content');
-        CUI.dom.append(plotsElement, plotsContentElement);
-
-        const districtsLoadingIconElement = this.__renderLoadingIcon();
-        CUI.dom.append(districtsContentElement, districtsLoadingIconElement);
-
-        const plotsLoadingIconElement = this.__renderLoadingIcon();
-        CUI.dom.append(plotsContentElement, plotsLoadingIconElement);
+        const loadingIconElement = this.__renderLoadingIcon();
+        CUI.dom.append(rootElement, loadingIconElement);
         
         this.__getAlkisData(opts.top_level_data).then(alkisData => {
-            CUI.dom.append(districtsContentElement, this.__renderDataLabel(alkisData.districts));
-            CUI.dom.append(plotsContentElement, this.__renderDataLabel(alkisData.plots));
+            CUI.dom.append(rootElement, this.__renderDataLabel(alkisData));
         }).catch(err => {
             console.error(err);
-            CUI.dom.append(districtsContentElement, this.__renderDataLabel());
-            CUI.dom.append(plotsContentElement, this.__renderDataLabel());
+            CUI.dom.append(rootElement, this.__renderDataLabel());
         }).finally(() => {
-            CUI.dom.remove(districtsLoadingIconElement);
-            CUI.dom.remove(plotsLoadingIconElement);
+            CUI.dom.remove(loadingIconElement);
         });
 
         return rootElement;
@@ -67,11 +48,11 @@ const CustomMaskSplitterAlkis = (function(superClass) {
         return performPostRequest(url, requestData);
     };
 
-    Plugin.__renderHeader = function(text) {
+    Plugin.__renderHeader = function() {
         const headerElement = CUI.dom.div('ez5-field-block-header');
         const titleElement = CUI.dom.div('ez5-field-block-title');
         
-        const labelElement = new CUI.Label({ text, class: 'ez5-field-label' });
+        const labelElement = new CUI.Label({ text: $$('custom.mask.splitter.alkis.header'), class: 'ez5-field-label' });
 
         CUI.dom.append(titleElement, labelElement);
 		CUI.dom.append(headerElement, titleElement);
@@ -90,8 +71,9 @@ const CustomMaskSplitterAlkis = (function(superClass) {
     Plugin.__renderDataLabel = function(entries) {
         if (entries?.length) {
             const rootElement = CUI.dom.div();
-            for (let entry of entries) {
-                CUI.dom.append(rootElement, new CUI.Label({ text: entry, class: 'alkis-entry-label' }));
+            const texts = entries.map(entry => entry.district + ' ' + entry.plot);
+            for (let text of texts) {
+                CUI.dom.append(rootElement, new CUI.Label({ text, class: 'alkis-entry-label' }));
             }
             return rootElement;
         } else {
