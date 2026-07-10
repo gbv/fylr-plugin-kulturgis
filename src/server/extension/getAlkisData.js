@@ -95,6 +95,8 @@ async function getHamburgAlkisData(polygon) {
         if (entry) result.push(entry);
     }
 
+    sortEntries(result);
+
     return result;
 }
 
@@ -152,6 +154,8 @@ async function getNiedersachsenAlkisData(polygon) {
         };
         if (entry) result.push(entry);
     }
+
+    sortEntries(result);
     
     return result;
 }
@@ -230,6 +234,33 @@ function getState(findplaceData) {
     } else {
         return undefined;
     }
+}
+
+function sortEntries(entries) {
+    entries.sort((entry1, entry2) => {
+        if (entry1.district < entry2.district) return -1;
+        if (entry1.district > entry2.district) return 1;
+
+        const plotNumbers1 = entry1.plot.split('/');
+        const zaehler1 = parseInt(plotNumbers1[0]);
+        const nenner1 = plotNumbers1.length === 2 ? parseInt(plotNumbers1[1]) : undefined;
+
+        const plotNumbers2 = entry2.plot.split('/');
+        const zaehler2 = parseInt(plotNumbers2[0]);
+        const nenner2 = plotNumbers2.length === 2 ? parseInt(plotNumbers2[1]) : undefined;
+
+        if (zaehler1 < zaehler2) return -1;
+        if (zaehler1 > zaehler2) return 1;
+
+        if (nenner1) {
+            if (!nenner2 || nenner1 > nenner2) return 1;
+            if (nenner1 < nenner2) return -1;
+        }
+
+        if (nenner2) return -1;
+
+        return 0;
+    });
 }
 
 function getTagsConfiguration() {
