@@ -28,7 +28,7 @@ async function handleRequest() {
         const geometries = await getGeometries(geometryIds);
         if (!geometries.length) return { error: false };
 
-        return await getAlkisData(findplaceData, geometries[0]);
+        return await getAlkisData(findplaceData, geometries);
     } catch (err) {
         return { error: true, message: err.toString() };
     }
@@ -70,19 +70,19 @@ async function getGeometries(geometryIds) {
     return geometryData?.map(geometry => geometry.replace(/urn:x-ogc:def:crs:EPSG:/g, 'urn:ogc:def:crs:EPSG::')) ?? [];
 }
 
-async function getAlkisData(findplaceData, geometry) {
+async function getAlkisData(findplaceData, geometries) {
     switch (getState(findplaceData)) {
         case 'Hamburg':
-            return await getHamburgAlkisData(geometry);
+            return await getHamburgAlkisData(geometries);
         case 'Niedersachsen':
-            return await getNiedersachsenAlkisData(geometry);
+            return await getNiedersachsenAlkisData(geometries);
         default:
             throw 'Missing tag "Hamburg" or "Niedersachsen"';
         }
 }
 
-async function getHamburgAlkisData(geometry) {
-    const data = await getHamburgAlkisResultForGeometry(geometry);
+async function getHamburgAlkisData(geometries) {
+    const data = await sendHamburgAlkisRequest(geometries);
     const matches = data.matchAll(/<ave:Flurstueck([\s\S]+?)<\/ave:Flurstueck>/g);
 
     const result = [];
@@ -100,7 +100,7 @@ async function getHamburgAlkisData(geometry) {
     return result;
 }
 
-async function getHamburgAlkisResultForGeometry(geometry) {
+async function sendHamburgAlkisRequest(geometries) {
     const transactionUrl = 'https://geodienste.hamburg.de/WFS_HH_ALKIS_vereinfacht';
 
     const requestXml ='<?xml version="1.0" ?>'
@@ -113,12 +113,7 @@ async function getHamburgAlkisResultForGeometry(geometry) {
         + 'xmlns:gml="http://www.opengis.net/gml" '
         + 'xsi:schemaLocation="http://www.opengis.net/wfs http://www.opengis.net/wfs">'
         + '<wfs:Query typeName="Flurstueck">'
-        + '<ogc:Filter>'
-        + '<ogc:Intersects>'
-        + '<ogc:PropertyName>geometrie</ogc:PropertyName>'
-        + geometry
-        + '</ogc:Intersects>'
-        + '</ogc:Filter>'
+        + getFilter(geometries, 'geometrie')
         + '</wfs:Query>'
         + '</wfs:GetFeature>';
 
@@ -141,8 +136,8 @@ function getHamburgPlot(data) {
     return data.match(/<ave:flstnrzae>\s*(\d+)\s*<\/ave:flstnrzae>/)?.[1];
 }
 
-async function getNiedersachsenAlkisData(geometry) {
-    const data = await getNiedersachsenAlkisResultForGeometry(geometry);
+async function getNiedersachsenAlkisData(geometries) {
+    const data = await sendNiedersachsenAlkisRequest(geometries);
     const matches = data.matchAll(/<AX_Flurstueck([\s\S]+?)<\/AX_Flurstueck>/g);
 
     const result = [];
@@ -160,7 +155,7 @@ async function getNiedersachsenAlkisData(geometry) {
     return result;
 }
 
-async function getNiedersachsenAlkisResultForGeometry(geometry) {
+async function sendNiedersachsenAlkisRequest(geometries) {
     const transactionUrl = 'https://opendata.lgln.niedersachsen.de/doorman/noauth/alkis_wfs_sf';
 
     const requestXml ='<?xml version="1.0" ?>'
@@ -174,12 +169,7 @@ async function getNiedersachsenAlkisResultForGeometry(geometry) {
         + 'xmlns:adv="http://www.adv-online.de/namespaces/adv/gid/7.1" '
         + 'xsi:schemaLocation="http://www.opengis.net/wfs http://www.opengis.net/wfs">'
         + '<wfs:Query typeName="adv:AX_Flurstueck">'
-        + '<ogc:Filter>'
-        + '<ogc:Intersects>'
-        + '<ogc:PropertyName>adv:position</ogc:PropertyName>'
-        + geometry
-        + '</ogc:Intersects>'
-        + '</ogc:Filter>'
+        + getFilter(geometries, 'adv:position')
         + '</wfs:Query>'
         + '</wfs:GetFeature>';
 
@@ -221,6 +211,21 @@ function getNiedersachsenPlot(data) {
     return zaehler && nenner
         ? zaehler + '/' + nenner
         : zaehler ?? nenner;
+}
+
+function getFilter(geometries, propertyName) {
+    return '<ogc:Filter>'
+        + (geometries.length > 1 ? '<ogc:Or>' : '')
+        + geometries.map(geometry => getIntersectsFilter(geometry, propertyName)).join('')
+        + (geometries.length > 1 ? '</ogc:Or>' : '')
+        + '</ogc:Filter>';
+}
+
+function getIntersectsFilter(geometry, propertyName) {
+    return '<ogc:Intersects>'
+        + '<ogc:PropertyName>' + propertyName + '</ogc:PropertyName>'
+        + geometry
+        + '</ogc:Intersects>';
 }
 
 function getState(findplaceData) {
