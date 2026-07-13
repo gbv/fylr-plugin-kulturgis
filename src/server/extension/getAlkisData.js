@@ -25,10 +25,10 @@ async function handleRequest() {
         const geometryIds = await getGeometryIds(findplaceData);
         if (!geometryIds.length) return { error: false };
 
-        const polygons = await getPolygons(geometryIds);
-        if (!polygons.length) return { error: false };
+        const geometries = await getGeometries(geometryIds);
+        if (!geometries.length) return { error: false };
 
-        return await getAlkisData(findplaceData, polygons[0]);
+        return await getAlkisData(findplaceData, geometries[0]);
     } catch (err) {
         return { error: true, message: err.toString() };
     }
@@ -61,28 +61,28 @@ async function getFindplaceElements(findplaceData) {
     return result;
 }
 
-async function getPolygons(geometryIds) {
+async function getGeometries(geometryIds) {
     const geoPluginConfiguration = await getGeoPluginConfiguration();
     const wfsConfiguration = getWfsConfiguration('fundplatz_element', geoPluginConfiguration);
     const authorizationString = getAuthorizationString(geoPluginConfiguration);
 
-    const polygonData = await getPolygonData(geometryIds, wfsConfiguration, authorizationString);
-    return polygonData?.map(polygon => polygon.replace(/urn:x-ogc:def:crs:EPSG:/g, 'urn:ogc:def:crs:EPSG::')) ?? [];
+    const geometryData = await getGeometryData(geometryIds, wfsConfiguration, authorizationString);
+    return geometryData?.map(geometry => geometry.replace(/urn:x-ogc:def:crs:EPSG:/g, 'urn:ogc:def:crs:EPSG::')) ?? [];
 }
 
-async function getAlkisData(findplaceData, polygon) {
+async function getAlkisData(findplaceData, geometry) {
     switch (getState(findplaceData)) {
         case 'Hamburg':
-            return await getHamburgAlkisData(polygon);
+            return await getHamburgAlkisData(geometry);
         case 'Niedersachsen':
-            return await getNiedersachsenAlkisData(polygon);
+            return await getNiedersachsenAlkisData(geometry);
         default:
             throw 'Missing tag "Hamburg" or "Niedersachsen"';
         }
 }
 
-async function getHamburgAlkisData(polygon) {
-    const data = await getHamburgAlkisResultForPolygon(polygon);
+async function getHamburgAlkisData(geometry) {
+    const data = await getHamburgAlkisResultForGeometry(geometry);
     const matches = data.matchAll(/<ave:Flurstueck([\s\S]+?)<\/ave:Flurstueck>/g);
 
     const result = [];
@@ -100,7 +100,7 @@ async function getHamburgAlkisData(polygon) {
     return result;
 }
 
-async function getHamburgAlkisResultForPolygon(polygon) {
+async function getHamburgAlkisResultForGeometry(geometry) {
     const transactionUrl = 'https://geodienste.hamburg.de/WFS_HH_ALKIS_vereinfacht';
 
     const requestXml ='<?xml version="1.0" ?>'
@@ -116,7 +116,7 @@ async function getHamburgAlkisResultForPolygon(polygon) {
         + '<ogc:Filter>'
         + '<ogc:Intersects>'
         + '<ogc:PropertyName>geometrie</ogc:PropertyName>'
-        + polygon
+        + geometry
         + '</ogc:Intersects>'
         + '</ogc:Filter>'
         + '</wfs:Query>'
@@ -141,8 +141,8 @@ function getHamburgPlot(data) {
     return data.match(/<ave:flstnrzae>\s*(\d+)\s*<\/ave:flstnrzae>/)?.[1];
 }
 
-async function getNiedersachsenAlkisData(polygon) {
-    const data = await getNiedersachsenAlkisResultForPolygon(polygon);
+async function getNiedersachsenAlkisData(geometry) {
+    const data = await getNiedersachsenAlkisResultForGeometry(geometry);
     const matches = data.matchAll(/<AX_Flurstueck([\s\S]+?)<\/AX_Flurstueck>/g);
 
     const result = [];
@@ -160,7 +160,7 @@ async function getNiedersachsenAlkisData(polygon) {
     return result;
 }
 
-async function getNiedersachsenAlkisResultForPolygon(polygon) {
+async function getNiedersachsenAlkisResultForGeometry(geometry) {
     const transactionUrl = 'https://opendata.lgln.niedersachsen.de/doorman/noauth/alkis_wfs_sf';
 
     const requestXml ='<?xml version="1.0" ?>'
@@ -177,7 +177,7 @@ async function getNiedersachsenAlkisResultForPolygon(polygon) {
         + '<ogc:Filter>'
         + '<ogc:Intersects>'
         + '<ogc:PropertyName>adv:position</ogc:PropertyName>'
-        + polygon
+        + geometry
         + '</ogc:Intersects>'
         + '</ogc:Filter>'
         + '</wfs:Query>'

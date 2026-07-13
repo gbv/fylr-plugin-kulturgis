@@ -48,8 +48,8 @@ async function getEnsemble() {
 async function getFindplaces(ensemble, geoPluginConfiguration) {
     const ensembleElements = await getEnsembleElements(ensemble);
     const ensembleGeometryIds = getGeometryIds(ensembleElements);
-    const ensemblePolygons = await getEnsemblePolygons(ensembleGeometryIds, geoPluginConfiguration);
-    const findplaceGeometryIds = await getFindplaceGeometryIds(ensemblePolygons, geoPluginConfiguration);
+    const ensembleGeometries = await getEnsembleGeometries(ensembleGeometryIds, geoPluginConfiguration);
+    const findplaceGeometryIds = await getFindplaceGeometryIds(ensembleGeometries, geoPluginConfiguration);
     const findplaceElements = await getFindplaceElements(findplaceGeometryIds);
     const findplaces = await getLinkedFindplaces(findplaceElements);
     const findplacesToAdd = getFindplacesToAdd(findplaces, ensemble);
@@ -76,24 +76,24 @@ function getGeometryIds(ensembleElements) {
     }, []);
 }
 
-function getEnsemblePolygons(geometryIds, geoPluginConfiguration) {
+function getEnsembleGeometries(geometryIds, geoPluginConfiguration) {
     const wfsConfiguration = getWfsConfiguration('ensemble_element', geoPluginConfiguration);
-    return getPolygonData(geometryIds, wfsConfiguration, getAuthorizationString(geoPluginConfiguration));
+    return getGeometryData(geometryIds, wfsConfiguration, getAuthorizationString(geoPluginConfiguration));
 }
 
-async function getFindplaceGeometryIds(ensemblePolygons, geoPluginConfiguration) {
+async function getFindplaceGeometryIds(ensembleGeometries, geoPluginConfiguration) {
     let geometryIds = [];
 
-    for (let ensemblePolygon of ensemblePolygons) {
+    for (let ensembleGeometry of ensembleGeometries) {
         geometryIds = geometryIds.concat(
-            await getFindplaceGeometryIdsForPolygon(ensemblePolygon, geoPluginConfiguration)
+            await getFindplaceGeometryIdsForGeometry(ensembleGeometries, geoPluginConfiguration)
         );
     }
 
     return geometryIds;
 }
 
-async function getFindplaceGeometryIdsForPolygon(ensemblePolygon, geoPluginConfiguration) {
+async function getFindplaceGeometryIdsForGeometry(ensembleGeometry, geoPluginConfiguration) {
     const { wfsUrl, featureType } = getWfsConfiguration('fundplatz_element', geoPluginConfiguration);
     const transactionUrl = wfsUrl + '?service=WFS&version=1.1.0&request=GetFeature';
 
@@ -110,7 +110,7 @@ async function getFindplaceGeometryIdsForPolygon(ensemblePolygon, geoPluginConfi
         + '<ogc:Filter>'
         + '<ogc:Intersects>'
         + '<ogc:PropertyName>geom</ogc:PropertyName>'
-        + ensemblePolygon
+        + ensembleGeometry
         + '</ogc:Intersects>'
         + '</ogc:Filter>'
         + '</wfs:Query>'

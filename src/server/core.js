@@ -88,7 +88,7 @@ function getAuthorizationString(geoPluginConfiguration) {
     return 'Basic ' + btoa(username + ':' + password);
 }
 
-async function getPolygonData(geometryIds, wfsConfiguration, authorizationString) {
+async function getGeometryData(geometryIds, wfsConfiguration, authorizationString) {
     const transactionUrl = wfsConfiguration.wfsUrl + '?service=WFS&version=1.1.0&request=GetFeature';
 
     const requestXml = '<?xml version="1.0" ?>'
@@ -113,7 +113,7 @@ async function getPolygonData(geometryIds, wfsConfiguration, authorizationString
         body: requestXml
     });
 
-    return getPolygonsFromXml(await response.text());
+    return getGeometriesFromXml(await response.text());
 }
 
 function getGeometryIdFilterXml(geometryIds, geometryIdFieldName) {
@@ -134,6 +134,6 @@ function getGeometryIdFilterElementXml(geometryIdFieldName) {
     }
 }
 
-function getPolygonsFromXml(xml) {
-    return xml.match(/<gml:Polygon[\s\S]*?<\/gml:Polygon>/g);
+function getGeometriesFromXml(xml) {
+    return xml.match(/<gml:(Point|LineString|Polygon|MultiPoint|MultiLineString|MultiPolygon)[\s\S]*?<\/gml:\1>/g);
 }
