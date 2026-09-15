@@ -1,0 +1,33 @@
+server:
+  install:
+  - l10n/kulturgis.csv
+  bundles:
+    - out: server/extension/createArchaeodoxFindplaces.js
+      sources:
+      - src/server/extension/createArchaeodoxFindplaces.js
+      - src/server/core.js
+    - out: server/extension/createArchaeodoxEnsembles.js
+      sources:
+      - src/server/extension/createArchaeodoxEnsembles.js
+      - src/server/core.js
+    - out: server/extension/getAlkisData.js
+      sources:
+      - src/server/extension/getAlkisData.js
+      - src/server/core.js
+    - out: server/extension/linkEnsembleWithPlaces.js
+      sources:
+      - src/server/extension/linkEnsembleWithPlaces.js
+      - src/server/core.js
+webfrontend:
+  bundles:
+    - out: webfrontend/kulturgis.js
+      sources:
+      - src/webfrontend/js/alkisCustomMaskSplitterPlugin.js
+      - src/webfrontend/js/collectionPlugin.js
+      - src/webfrontend/js/core.js
+    - out: webfrontend/kulturgis.css
+      sources:
+      - src/webfrontend/css/alkisCustomMaskSplitterPlugin.css
+
+zip_aliases:
+- KulturGIS.zip
