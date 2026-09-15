@@ -23,7 +23,9 @@ async function handleRequest() {
         const geoPluginConfiguration = await getGeoPluginConfiguration();
         const ensemble = await getEnsemble();
         const findplaces = await getFindplaces(ensemble, geoPluginConfiguration);
-        const success = await linkFindplacesWithEnsemble(ensemble, findplaces);
+
+        let success = true;
+        if (findplaces?.length) success = await linkFindplacesWithEnsemble(ensemble, findplaces);
 
         return {
             linkedFindplaces: success ? findplaces : [],
@@ -76,9 +78,11 @@ function getGeometryIds(ensembleElements) {
     }, []);
 }
 
-function getEnsembleGeometries(geometryIds, geoPluginConfiguration) {
+async function getEnsembleGeometries(geometryIds, geoPluginConfiguration) {
     const wfsConfiguration = getWfsConfiguration('ensemble_element', geoPluginConfiguration);
-    return getGeometryData(geometryIds, wfsConfiguration, getAuthorizationString(geoPluginConfiguration));
+    const geometries = await getGeometryData(geometryIds, wfsConfiguration, getAuthorizationString(geoPluginConfiguration));
+
+    return geometries ?? [];
 }
 
 async function getFindplaceGeometryIds(ensembleGeometries, geoPluginConfiguration) {
@@ -136,6 +140,8 @@ function getGeometryIdsFromXml(xml) {
 
 async function getFindplaceElements(geometryIds) {
     const url = info.api_url + '/api/v1/search?access_token=' + info.api_user_access_token;
+
+    if (!geometryIds?.length) return [];
 
     const searchRequest = {
         search: geometryIds.map(geometryId => {
