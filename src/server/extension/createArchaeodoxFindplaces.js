@@ -38,7 +38,7 @@ async function handleRequest() {
 
 async function processObject(object, archaeodoxUrl, accessToken, tagPoolMapping) {
     const districtName = await getLinkedDistrictName(object);
-    const findplaceNumber = object.fundplatz.fundplatz_id;
+    const findplaceNumber = object.fundplatz.fundplatz_nummer;
 
     const existingFindplaces = await findExistingFindplaces(archaeodoxUrl, districtName, findplaceNumber, accessToken);
     if (existingFindplaces.length) return;
