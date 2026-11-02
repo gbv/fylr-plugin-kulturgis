@@ -249,6 +249,14 @@ function sortEntries(entries) {
         if (entry1.district < entry2.district) return -1;
         if (entry1.district > entry2.district) return 1;
 
+        if (entry1.parcel !== undefined && entry2.parcel === undefined) return -1;
+        if (entry1.parcel === undefined && entry2.parcel !== undefined) return 1;
+
+        if (entry1.parcel !== undefined && entry2.parcel !== undefined) {
+            if (entry1.parcel < entry2.parcel) return -1;
+            if (entry1.parcel > entry2.parcel) return 1;
+        }
+
         const plotNumbers1 = entry1.plot.split('/');
         const zaehler1 = parseInt(plotNumbers1[0]);
         const nenner1 = plotNumbers1.length === 2 ? parseInt(plotNumbers1[1]) : undefined;
