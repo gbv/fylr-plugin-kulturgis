@@ -145,7 +145,8 @@ async function getNiedersachsenAlkisData(geometries) {
     for (match of matches) {
         const entry = {
             district: await getNiedersachsenDistrict(match[1]),
-            plot: getNiedersachsenPlot(match[1])
+            plot: getNiedersachsenPlot(match[1]),
+            parcel: getNiedersachsenParcel(match[1])
         };
         if (entry) result.push(entry);
     }
@@ -202,8 +203,6 @@ async function getDanteConcept(districtNumber) {
 }
 
 function getNiedersachsenPlot(data) {
-    const result = [];
-
     const plot = data.match(/<AX_Flurstuecksnummer>([\s\S]+)<\/AX_Flurstuecksnummer>/)?.[1];
     const zaehler = plot.match(/<zaehler>\s*(\d+)\s*<\/zaehler>/)?.[1];
     const nenner = plot.match(/<nenner>\s*(\d+)\s*<\/nenner>/)?.[1];
@@ -211,6 +210,10 @@ function getNiedersachsenPlot(data) {
     return zaehler && nenner
         ? zaehler + '/' + nenner
         : zaehler ?? nenner;
+}
+
+function getNiedersachsenParcel(data) {
+    return data.match(/<flurnummer>\s*(\d+)\s*<\/flurnummer>/)?.[1];
 }
 
 function getFilter(geometries, propertyName) {

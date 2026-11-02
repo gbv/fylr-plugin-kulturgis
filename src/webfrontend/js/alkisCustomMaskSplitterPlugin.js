@@ -71,7 +71,11 @@ const CustomMaskSplitterAlkis = (function(superClass) {
     Plugin.__renderDataLabel = function(entries) {
         if (entries?.length) {
             const rootElement = CUI.dom.div();
-            const texts = entries.map(entry => entry.district + ' ' + entry.plot);
+            const texts = entries.map(entry => {
+                return entry.district + ' '
+                    + (entry.parcel ? entry.parcel + ' ' : '')
+                    + entry.plot;
+            });
             for (let text of texts) {
                 CUI.dom.append(rootElement, new CUI.Label({ text, class: 'alkis-entry-label' }));
             }
