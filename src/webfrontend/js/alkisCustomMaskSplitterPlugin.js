@@ -39,7 +39,7 @@ const CustomMaskSplitterAlkis = (function(superClass) {
     Plugin.__getAlkisData = function(object) {
         const url = ez5.session.data.instance.external_url
             + '/api/v1/plugin/extension/kulturgis/getAlkisData?access_token='
-            + ez5.session.data.access_token;
+            + (ez5.session.token ?? ez5.session.data.access_token);
 
         const requestData = {
             findplace: object
