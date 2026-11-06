@@ -18,6 +18,11 @@ plugin:
 base_url_prefix: webfrontend
 
 base_config:
+  - name: kulturgis_core
+    parameters:
+      root_user:
+        type: user
+        position: 0
   - name: kulturgis_tags
     parameters:
       hamburg_tag_id:
@@ -56,6 +61,8 @@ base_config:
 
 extensions:
   linkEnsembleWithPlaces:
+    plugin_user:
+      base_config: "kulturgis_core.root_user"
     exec:
       service: "node"
       commands:
@@ -70,6 +77,8 @@ extensions:
             - type: "value"
               value: "%info.json%"
   getAlkisData:
+    plugin_user:
+      base_config: "kulturgis_core.root_user"
     exec:
       service: "node"
       commands:

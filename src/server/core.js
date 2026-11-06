@@ -52,8 +52,11 @@ async function saveObject(object, fylrUrl = info.api_url, accessToken = info.api
 }
 
 async function getConfiguration() {
-    const url = 'http://fylr.localhost:8082/inspect/config';
-    const headers = { 'Accept': 'application/json' };
+    const url = info.external_url + '/inspect/config';
+    const headers = {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + info.plugin_user_access_token
+    };
 
     return (await fetch(url, { headers })).json();
 }

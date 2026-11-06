@@ -11,6 +11,8 @@ custom.mask.splitter.alkis.title|text,ALKIS-Daten,ALKIS data
 custom.mask.splitter.alkis.header,ALKIS,ALKIS
 custom.mask.splitter.alkis.loading,Lade Daten...,Loading data...
 custom.mask.splitter.alkis.noResults,Keine,None
+server.config.name.system.kulturgis_core,Allgemein,Core
+server.config.parameter.system.kulturgis_core.root_user.label,Root-Benutzer,Root user
 server.config.name.system.kulturgis_tags,Tags,Tags
 server.config.parameter.system.kulturgis_tags.hamburg_tag_id.label,Tag-ID Hamburg,Tag ID Hamburg
 server.config.parameter.system.kulturgis_tags.niedersachsen_tag_id.label,Tag-ID Niedersachsen,Tag ID Niedersachsen
