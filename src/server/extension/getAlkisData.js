@@ -213,7 +213,8 @@ function getNiedersachsenPlot(data) {
 }
 
 function getNiedersachsenParcel(data) {
-    return data.match(/<flurnummer>\s*(\d+)\s*<\/flurnummer>/)?.[1];
+    const number = data.match(/<flurnummer>\s*(\d+)\s*<\/flurnummer>/)?.[1];
+    return String(number).padStart(3, '0');
 }
 
 function getFilter(geometries, propertyName) {
